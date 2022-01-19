@@ -6,13 +6,13 @@ module Michel
       ENV['BUNDLE_GEMFILE'] = File.join(dir, 'Gemfile')
       Bundler.reset!
       @scanner = scanner
-      super({}, [])
+      super({parseable: true, groups: true}, [])
     end
 
     def exit(_); end
 
-    def print_gem(newest_spec, active_spec, dependency, _, _)
-      @scanner.send :outdated, newest_spec, active_spec, dependency
+    def print_gem(current_spec, active_spec, dependency, groups)
+      @scanner.send :outdated, current_spec, active_spec, groups
     end
   end
 end

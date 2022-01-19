@@ -1,12 +1,13 @@
 require 'michel/outdated'
 require 'bundler/audit/scanner'
-require 'michel/reporter'
+require 'michel/csv_reporter'
+require 'byebug'
 
 module Michel
   module Scanner
     class << self
       Project = Struct.new(:outdated, :unpatched)
-      Unpatched = Struct.new(:newest, :current, :dependency)
+      Unpatched = Struct.new(:current, :active, :groups)
 
       def scan(directories)
         results = {}.tap do |projects|
@@ -17,7 +18,7 @@ module Michel
             scan_unpatched(dir)
           end
         end
-        Reporter.report(results)
+        CsvReporter.report(results)
       end
 
       private
@@ -33,8 +34,8 @@ module Michel
         end
       end
 
-      def outdated(newest, current, dependency)
-        @current_project.outdated << Unpatched.new(newest, current, dependency)
+      def outdated(current, active, groups)
+        @current_project.outdated << Unpatched.new(current, active, groups)
       end
     end
   end
